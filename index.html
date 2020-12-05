@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Ford vs Dijkstra</title>
+		<script src="https://kit.fontawesome.com/a131cb3e00.js" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="src/phaser.js"></script>
+		<link rel="stylesheet" href="stylesheet.css">
+    </head>
+    <body>
+		<div class="toolbar">
+			<div class="addNode" onclick="setNode()" id="addNode"><i class="fas fa-plus"></i></div>
+			<div class="startNode" onclick="setStart()" id="startNode"><i class="fas fa-map-marker"></i></div>
+			<div class="endNode" onclick="setFinish()" id="endNode"><i class="fas fa-map-marker-alt"></i></div>
+			
+			<div class="nodeProperties" id="nodeProperties">
+				<label class="container">
+					<input type="checkbox" id="eletricalRoad" onclick="setElectrical()">
+					<span class="checkmark"></span>
+					<label>Use negative weight</label>
+				</label>
+			</div>
+		</div>
+	<script type="text/javascript" src="src/tinyqueue.min.js"></script>
+	<script type="text/javascript" src="src/node.js"></script>
+    <script type="text/javascript" src="src/utils.js"></script>
+	<script type="text/javascript" src="src/game.js"></script>
+    </body>
+</html>
