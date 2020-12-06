@@ -158,6 +158,27 @@ async function getDijkstraPath(graph, start_node, last_node) {
 	}
 }
 
+function HSLToHex(h, s, l) {
+	l /= 100;
+	const a = s * Math.min(l, 1 - l) / 100;
+	const f = n => {
+		const k = (n + h / 30) % 12;
+		const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+		return Math.round(255 * color).toString(16).padStart(2, '0');
+	};
+	
+	return `0x${f(0)}${f(8)}${f(4)}`;
+}
+
+function randomHSL() {
+	let h = 100;
+	while(h > 85 && h < 160) {
+		h = parseInt(Math.random() * 360);
+	}
+	
+	return {h: h, s: 90, l: 50}
+}
+
 async function getBellmanFordPath(graph, start_node, last_node) {
 	let costM = [];
 	let sucessorM = [];
@@ -174,6 +195,9 @@ async function getBellmanFordPath(graph, start_node, last_node) {
 	}
 	
 	for(let i = 1; i <= maxEdges; i += 1) {
+		let layerColor = randomHSL();
+		layerColor = HSLToHex(layerColor.h, layerColor.s, layerColor.l);
+		
 		for(let v = 0; v < graph.size; v += 1) {
 			let node = graph.getVertex(v);
 			costM[i][v] = costM[i - 1][v];
@@ -182,20 +206,26 @@ async function getBellmanFordPath(graph, start_node, last_node) {
 				if(costM[i][v] > costM[i - 1][edge.edge] + edge.weight) {
 					costM[i][v] = costM[i - 1][edge.edge] + edge.weight;
 					
-					sucessorM[v] = edge.edge;
+					sucessorM[v] = edge;
 					
-					simulationGraphics.lineStyle(4, 0xFF0000);
-					simulationGraphics.strokeLineShape(edge.line);
-					await sleep(1000);
-				}
-				
-				else {
-					simulationGraphics.lineStyle(4, 0xFFFF00);
+					simulationGraphics.lineStyle(4, layerColor);
 					simulationGraphics.strokeLineShape(edge.line);
 					await sleep(1000);
 				}
 			}
 		}
+	}
+	
+	let currentNode = start_node;
+	let nodeEdge = sucessorM[currentNode];
+	simulationGraphics.lineStyle(4, 0x00FF00);
+	
+	while(currentNode != last_node) {
+		simulationGraphics.strokeLineShape(nodeEdge.line);
+		await sleep(500);
+		
+		currentNode = nodeEdge.edge;
+		nodeEdge = sucessorM[currentNode];
 	}
 }
 
