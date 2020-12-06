@@ -7,7 +7,6 @@ class WeightedGraph {
     this.size = 0;
     this.edges = 0;
     this.hasCycle = false;
-    this.lowestWeight = 0;
   }
 
   addVertex(v, info = {}) {
@@ -27,10 +26,8 @@ class WeightedGraph {
 class DirectedGraph extends WeightedGraph {
   addEdge(v1, v2, weight, line) {
     this.adjList.get(v1).edges.push({ edge: v2, weight: weight, line: line });
-    this.edgeList.push({ src: v1, dest: v2, weight: weight });
+    this.edgeList.push({ src: v1, dest: v2, weight: weight, line: line });
     this.edges++;
-
-    if (weight < this.lowestWeight) this.lowestWeight = weight;
   }
 }
 
@@ -168,54 +165,6 @@ async function getDijkstraPath(graph, start_node, last_node) {
   }
 }
 
-function bellmanFord(graph, start_node, last_node) {
-  let distance = {};
-  let predecessor = {};
-  let path = [];
-  let target = last_node;
-
-  for (let i = 0; i < graph.size; i++) {
-    distance[i] = INF;
-  }
-  distance[start_node] = 0;
-
-  for (let i = 1; i < graph.size; i++) {
-    for (let j = 0; j < graph.edges; j++) {
-      let edge = graph.edgeList[j];
-      let u = edge.src;
-      let v = edge.dest;
-      let w = edge.weight;
-
-      if (distance[u] != INF && distance[u] + w < distance[v]) {
-        distance[v] = distance[u] + w;
-        predecessor[v] = u;
-      }
-    }
-  }
-
-  for (let i = 0; i < graph.edges; i++) {
-    let edge = graph.edgeList[i];
-    let u = edge.src;
-    let v = edge.dest;
-    let w = edge.weight;
-
-    if (distance[u] != INF && distance[u] + w < distance[v]) {
-      graph.hasCycle = true;
-    }
-  }
-
-  if (graph.hasCycle) {
-    console.log("Ciclo negativo");
-  } else {
-    bellmanCost = distance[last_node];
-    while (target != null) {
-      path.unshift(target);
-      target = predecessor[target];
-    }
-  }
-  return path;
-}
-
 const shortestPathBfs = async (graph, startNode, stopNode) => {
   const previous = new Map();
   const visited = new Set();
@@ -308,3 +257,39 @@ const shortestPathDfs = async (graph, startNode, stopNode) => {
 
   return { shortestDistance, previous };
 };
+async function getBellmanFordPath(graph, start_node, last_node) {
+  let costM = [];
+  let sucessorM = [];
+  const maxEdges = graph.size - 1;
+
+  costM[0] = [];
+  for (let c = 0; c < graph.size; c += 1) costM[0][c] = Infinity;
+
+  for (let c = 0; c <= maxEdges; c += 1) {
+    if (c != 0) costM[c] = [];
+    costM[c][last_node] = 0;
+  }
+
+  for (let i = 1; i <= maxEdges; i += 1) {
+    for (let v = 0; v < graph.size; v += 1) {
+      let node = graph.getVertex(v);
+      costM[i][v] = costM[i - 1][v];
+
+      for (let edge of node.edges) {
+        if (costM[i][v] > costM[i - 1][edge.edge] + edge.weight) {
+          costM[i][v] = costM[i - 1][edge.edge] + edge.weight;
+
+          sucessorM[v] = edge.edge;
+
+          simulationGraphics.lineStyle(4, 0xff0000);
+          simulationGraphics.strokeLineShape(edge.line);
+          await sleep(1000);
+        } else {
+          simulationGraphics.lineStyle(4, 0xffff00);
+          simulationGraphics.strokeLineShape(edge.line);
+          await sleep(1000);
+        }
+      }
+    }
+  }
+}
