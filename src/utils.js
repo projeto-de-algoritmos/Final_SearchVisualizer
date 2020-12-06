@@ -250,15 +250,12 @@ const shortestPathBfs = async (graph, startNode, stopNode) => {
       }
       return { shortestDistande: dist, previous };
     }
-    console.log("node", node);
-    console.log("graph.adjList.get(node)", graph.adjList.get(node));
+
     for (let neighbour of graph.adjList.get(node).edges) {
       if (!visited.has(neighbour.edge)) {
         previous.set(neighbour.edge, node);
         queue.push({ node: neighbour.edge, dist: dist + 1 });
         visited.add(neighbour.edge);
-
-        console.log("neighbour", neighbour);
         simulationGraphics.lineStyle(4, 0xff0000);
         simulationGraphics.strokeLineShape(neighbour.line);
         await sleep(1000);
@@ -266,4 +263,48 @@ const shortestPathBfs = async (graph, startNode, stopNode) => {
     }
   }
   return { shortestDistance: -1, previous };
+};
+
+const shortestPathDfs = async (graph, startNode, stopNode) => {
+  const previous = new Map();
+  let shortestDistance = -1;
+  const dfs = async (currentNode, depth) => {
+    if (currentNode === stopNode) {
+      shortestDistance = depth;
+      return new Promise((resolve, reject) => resolve());
+    } else {
+      for (let neighbour of graph.adjList.get(currentNode).edges) {
+        simulationGraphics.lineStyle(4, 0xff0000);
+        simulationGraphics.strokeLineShape(neighbour.line);
+        await sleep(1000);
+        previous.set(neighbour.edge, currentNode);
+        await dfs(neighbour.edge, depth + 1);
+      }
+    }
+  };
+  await dfs(startNode, 0);
+
+  let curN;
+  let preN;
+  simulationGraphics.lineStyle(4, 0x00ff00);
+
+  curN = preN = stopNode;
+
+  while (curN != startNode) {
+    if (!curN) {
+      alert("Unreachable destination!");
+      return;
+    }
+
+    curN = previous.get(curN);
+
+    simulationGraphics.strokeLineShape(
+      graph.getVertex(curN).edges.find((element) => element.edge == preN).line
+    );
+    await sleep(500);
+
+    preN = curN;
+  }
+
+  return { shortestDistance, previous };
 };
