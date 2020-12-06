@@ -18,6 +18,8 @@ var last_node = null;
 var dijkstraCost = 0;
 var bellmanCost = 0;
 
+var simulationGraphics;
+
 var MainScene = new Phaser.Class({
 	Extends: Phaser.Scene,
 	initialize: function MainScene() {
@@ -38,7 +40,7 @@ var MainScene = new Phaser.Class({
 		
 		this.tempGraphics = this.add.graphics({lineStyle: {width: 2, color: 0xffffff}});
 		this.permGraphics = this.add.graphics({lineStyle: {width: 2, color: 0xffffff}});
-		this.line;
+		simulationGraphics = this.add.graphics({lineStyle: {width: 4, color: 0xff0000}});
 		
 		this.isCreating = false;
 		
@@ -64,18 +66,18 @@ var MainScene = new Phaser.Class({
 						hoverOverNode.addEdge(this.line);
 						
 						if(multiplier == -1)
-							graph.addEdge(selectedNode, hoverOverNode.id, -Phaser.Geom.Line.Length(this.line));
+							graph.addEdge(selectedNode, hoverOverNode.id, -Phaser.Geom.Line.Length(this.line), this.line);
 						else
-							graph.addEdge(selectedNode, hoverOverNode.id, Phaser.Geom.Line.Length(this.line));
+							graph.addEdge(selectedNode, hoverOverNode.id, Phaser.Geom.Line.Length(this.line), this.line);
 					} else {
 						let node = new Node(this, e.position.x, e.position.y, 'circle', graph.size).setOrigin(0.5).setScale(0.05);
 						node.addEdge(this.line);
 						
 						graph.addVertex(graph.size, {x: e.position.x, y: e.position.y});
 						if(multiplier == -1)
-							graph.addEdge(selectedNode, node.id, -Phaser.Geom.Line.Length(this.line));
+							graph.addEdge(selectedNode, node.id, -Phaser.Geom.Line.Length(this.line), this.line);
 						else
-							graph.addEdge(selectedNode, node.id, Phaser.Geom.Line.Length(this.line));
+							graph.addEdge(selectedNode, node.id, Phaser.Geom.Line.Length(this.line), this.line);
 					}
 					
 					let middle_point = Phaser.Geom.Line.GetMidPoint(this.line);
@@ -91,7 +93,7 @@ var MainScene = new Phaser.Class({
 					this.isCreating = false;					
 					this.permGraphics.strokeLineShape(this.line);
 					this.tempGraphics.clear();
-				} else if(!graphNotEmpty){
+				} else if(!graphNotEmpty) {
 					this.isCreating = true;
 					this.line = new Phaser.Geom.Line(e.position.x, e.position.y, e.position.x, e.position.y);
 					
@@ -99,7 +101,7 @@ var MainScene = new Phaser.Class({
 					let node = new Node(this, e.position.x, e.position.y, 'circle', graph.size).setOrigin(0.5).setScale(0.05);
 					
 					selectedNode = graph.size;
-					graph.addVertex(graph.size, {x: e.position.x, y: e.position.y});
+					graph.addVertex(graph.size, {x: e.position.x, y: e.position.y, line: this.line});
 					
 					graphNotEmpty = true;
 					node.addEdge(this.line);

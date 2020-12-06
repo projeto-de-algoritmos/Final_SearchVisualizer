@@ -1,6 +1,5 @@
 let INF = 9999999999;
-var resultBellman;
-var resultDijkstra;
+
 class WeightedGraph {
 	constructor() {
 		this.adjList = new Map();
@@ -27,8 +26,8 @@ class WeightedGraph {
 
 
 class DirectedGraph extends WeightedGraph {
-	addEdge(v1, v2, weight) {
-		this.adjList.get(v1).edges.push({edge: v2, weight: weight});
+	addEdge(v1, v2, weight, line) {
+		this.adjList.get(v1).edges.push({edge: v2, weight: weight, line: line});
 		this.edgeList.push({src: v1, dest: v2, weight: weight});
 		this.edges++;
 		
@@ -97,13 +96,16 @@ function setElectrical() {
     }
 }
 
-function dijkstra(graph, start_node, last_node) {
+function sleep(ms) {
+	return new Promise((resolve, reject) => setTimeout(resolve, ms));
+}
+
+async function getDijkstraPath(graph, start_node, last_node) {
 	let priority_queue = new TinyQueue([], function (a, b) {
 		return a.priority - b.priority;
 	});
 	let distance = {};
 	let previous = {};
-	let nodeFound = false;
 
 	distance[start_node] = 0;
 	priority_queue.push({index: start_node, node: graph.getVertex(start_node), priority: 0});
@@ -116,38 +118,48 @@ function dijkstra(graph, start_node, last_node) {
 
 	while(priority_queue.length) {
 		let current_node = priority_queue.pop();
-
+		
 		for(edge of current_node.node.edges) {
 			let cost = edge.weight + distance[current_node.index];
 
 			if(cost < distance[edge.edge]) {
 				distance[edge.edge] = cost;
 				previous[edge.edge] = current_node.index;
-
-				if(edge.edge == last_node){
-					nodeFound = true;
-					dijkstraCost = cost;
-				}
-					
 				
+				simulationGraphics.lineStyle(4, 0xFF0000);
+				simulationGraphics.strokeLineShape(edge.line);
+				await sleep(1000);
+
 				priority_queue.push({index: edge.edge, node: graph.getVertex(edge.edge), priority: cost});
 			}
+			
+			else {
+				simulationGraphics.lineStyle(4, 0xFFFF00);
+				simulationGraphics.strokeLineShape(edge.line);
+				await sleep(1000);
+			}
+		}
+	}
+
+	let curN;
+	let preN;
+	simulationGraphics.lineStyle(4, 0x00FF00);
+	
+	curN = preN = last_node;
+	
+	while(curN != start_node) {
+		if(!curN) {
+			alert("Unreachable destination!");
+			return;
 		}
 		
-		if(nodeFound)
-			break;
-	}
-
-	let best_path = [last_node];
-
-	while(best_path[0] != start_node) {
-		if(previous[best_path[0]] == null)
-			return [];
+		curN = previous[curN];
 		
-		best_path.unshift(previous[best_path[0]]);
+		simulationGraphics.strokeLineShape(graph.getVertex(curN).edges.find(element => element.edge == preN).line);
+		await sleep(500);
+		
+		preN = curN;
 	}
-
-	return best_path;
 }
 
 function bellmanFord(graph, start_node, last_node){
@@ -200,92 +212,4 @@ function bellmanFord(graph, start_node, last_node){
 		}
 	}
 	return path;
-}
-
-function setPlayButton(scene) {
-	if(setPlayButton.play_button)
-		return;
-	
-	setPlayButton.play_button = scene.add.image(640, 710, 'play').setOrigin(0.5, 1).setScale(0.5);
-	setPlayButton.play_button.setInteractive();
-	
-	setPlayButton.play_button.on('pointerover', () => {
-		setPlayButton.play_button.setTint(0xed8d8d);
-	});
-	
-	setPlayButton.play_button.on('pointerout', () => {
-		setPlayButton.play_button.clearTint();
-	});
-	
-	setPlayButton.play_button.on('pointerup', () => {
-		let bellmanFordPath = bellmanFord(graph, start_node.id, last_node.id);
-		let dijkstraPath = dijkstra(graph, start_node.id, last_node.id)
-
-		let bellmanNode = graph.getVertex(bellmanFordPath.shift());
-		let dijkstraNode = graph.getVertex(dijkstraPath.shift());
-		
-		let bellmanNextNode;
-		let dijkstraNextNode;
-		
-		let bellmanTweens = scene.tweens.createTimeline();
-		let dijkstraTweens = scene.tweens.createTimeline();
-		
-		if(dijkstraPath.length) {
-			if(bellmanFordPath.length) {
-				if(setPlayButton.carOne) {
-					setPlayButton.carOne.destroy();
-					setPlayButton.carTwo.destroy();
-				}
-				
-				setPlayButton.bellmanCar = scene.add.image(start_node.x, start_node.y, 'bball');
-				setPlayButton.dijkstraCar = scene.add.image(start_node.x, start_node.y, 'dball');
-				
-				
-				while(bellmanFordPath.length) {
-					bellmanNextNode = graph.getVertex(bellmanFordPath.shift());
-					
-					bellmanTweens.add({
-						targets: setPlayButton.bellmanCar,
-						duration: getDistance({x: bellmanNode.x, y: bellmanNode.y}, {x: bellmanNextNode.x, y: bellmanNextNode.y})/0.1,
-						x: bellmanNextNode.x,
-						y: bellmanNextNode.y,
-						paused: true
-					});
-					
-					bellmanNode = bellmanNextNode;
-				}
-				
-				while(dijkstraPath.length) {
-					dijkstraNextNode = graph.getVertex(dijkstraPath.shift());
-					
-					dijkstraTweens.add({
-						targets: setPlayButton.dijkstraCar,
-						duration: getDistance({x: dijkstraNode.x, y: dijkstraNode.y}, {x: dijkstraNextNode.x, y: dijkstraNextNode.y})/0.1,
-						x: dijkstraNextNode.x,
-						y: dijkstraNextNode.y,
-						paused: true
-					});
-					
-					dijkstraNode = dijkstraNextNode;
-				}
-				
-				bellmanTweens.play();
-				dijkstraTweens.play();
-				if(resultBellman || resultDijkstra){
-					resultBellman.destroy();
-					resultDijkstra.destroy();
-				}
-					
-				resultBellman = scene.add.text(0, 680, "Bellman-Ford total weight: "+ bellmanCost.toFixed(3), { font: "20px Arial", fill: "#ffffff", align: "center" });
-				resultDijkstra = resultBellman = scene.add.text(0, 700, "Dijkstra total weight: "+ dijkstraCost.toFixed(3), { font: "20px Arial", fill: "#ffffff", align: "center" });
-				
-			}
-			
-			else
-				alert('Negative cycle found!');
-		}
-		
-		else
-			alert('Unreachable last node or start node and last node are the same!');
-	});
 }
