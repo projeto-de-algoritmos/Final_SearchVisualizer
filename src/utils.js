@@ -213,3 +213,31 @@ function bellmanFord(graph, start_node, last_node){
 	}
 	return path;
 }
+
+const shortestPathBfs = async(graph, startNode, stopNode) => {
+	const previous = new Map(); 
+  const visited = new Set();
+  const queue = [];
+  queue.push({ node: startNode, dist: 0 });
+  visited.add(startNode);
+
+  while (queue.length > 0) {
+    const { node, dist } = queue.shift();
+		if (node === stopNode) return { shortestDistande: dist, previous };
+		console.log("node", node)
+		console.log("graph.adjList.get(node)", graph.adjList.get(node))
+    for (let neighbour of graph.adjList.get(node).edges) {
+      if (!visited.has(neighbour.edge)) {
+        previous.set(neighbour.edge, node);
+        queue.push({ node: neighbour.edge, dist: dist + 1 });
+				visited.add(neighbour.edge);
+
+				console.log("neighbour", neighbour)
+				simulationGraphics.lineStyle(4, 0xFF0000);
+				simulationGraphics.strokeLineShape(neighbour.line);
+				await sleep(1000);
+      }
+    }
+  }
+  return { shortestDistance: -1, previous };
+};
