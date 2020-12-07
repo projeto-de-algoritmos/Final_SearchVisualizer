@@ -7,9 +7,13 @@ var Tools = {
 }
 var activeTool = 0;
 var multiplier = 1;
+
 var graphNotEmpty = false;
+var graphContainsNegativeWeight = false;
+
 var hoverOverNode = null;
 var selectedNode = null;
+
 var graph = new DirectedGraph();
 
 var start_node = null;
@@ -80,6 +84,7 @@ var MainScene = new Phaser.Class({
 					if(multiplier == -1) {
 						scene.permGraphics.lineStyle(2, 0xed8d8d);
 						this.add.image(middle_point.x, middle_point.y, 'arrow').setOrigin(0.5).setAngle(Phaser.Geom.Line.Angle(this.line) * 57.2958).setTint(0xed8d8d);
+						graphContainsNegativeWeight = true;
 					} else {
 						scene.permGraphics.lineStyle(2, 0xffffff);
 						this.add.image(middle_point.x, middle_point.y, 'arrow').setOrigin(0.5).setAngle(Phaser.Geom.Line.Angle(this.line) * 57.2958).setTint(0xffffff);

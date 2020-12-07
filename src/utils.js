@@ -201,12 +201,37 @@ function HSLToHex(h, s, l) {
 }
 
 function randomHSL() {
+	if(!randomHSL.h)
+		randomHSL.h = 100;
+	
 	let h = 100;
-	while(h > 85 && h < 160) {
+	while((h > 85 && h < 160) || Math.abs(randomHSL.h - h) < 40) {
 		h = parseInt(Math.random() * 360);
 	}
 	
+	randomHSL.h = h;
+	
 	return {h: h, s: 90, l: 50}
+}
+
+function setPlayButton(scene) {
+	if(setPlayButton.play_button)
+		return;
+	
+	setPlayButton.play_button = scene.add.image(640, 710, 'play').setOrigin(0.5, 1).setScale(0.5);
+	setPlayButton.play_button.setInteractive();
+	
+	setPlayButton.play_button.on('pointerover', () => {
+		setPlayButton.play_button.setTint(0xed8d8d);
+	});
+	
+	setPlayButton.play_button.on('pointerout', () => {
+		setPlayButton.play_button.clearTint();
+	});
+	
+	setPlayButton.play_button.on('pointerup', () => {
+		toggleModal();
+	});
 }
 
 async function getBellmanFordPath(graph, start_node, last_node) {
@@ -351,3 +376,40 @@ const shortestPathDfs = async (graph, startNode, stopNode) => {
 
   return { shortestDistance, previous };
 };
+
+async function setAlgorithm(algorithm) {
+	toggleModal();
+	simulationGraphics.clear();
+	await sleep(500);
+	
+	switch(algorithm) {
+		case 0:
+			console.log('bfs')
+			if(graphContainsNegativeWeight)
+				alert("Graph contains negative weight!");
+				
+			else
+				shortestPathBfs(graph, start_node.id, last_node.id);
+			break;
+		case 1:
+			console.log('dfs')
+			if(graphContainsNegativeWeight)
+				alert("Graph contains negative weight!");
+				
+			else
+				shortestPathDfs(graph, start_node.id, last_node.id);
+			break;
+		case 2:
+			console.log('dj')
+			if(graphContainsNegativeWeight)
+				alert("Graph contains negative weight!");
+				
+			else
+				getDijkstraPath(graph, start_node.id, last_node.id);
+			break;
+		case 3:
+			console.log('bellman')
+			getBellmanFordPath(graph, start_node.id, last_node.id);
+			break;
+	}
+}

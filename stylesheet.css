@@ -126,7 +126,6 @@ body {
 	left: 0;
 	top: 0;
 	background-color: black;
-	opacity: 20%;
 	transition: 0.5s;
 	opacity: 0;
 	pointer-events: none;
