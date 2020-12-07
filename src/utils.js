@@ -92,6 +92,29 @@ function setElectrical() {
   }
 }
 
+function toggleModal() {
+	toggleModal.visible = !toggleModal.visible;
+	
+	if(!toggleModal.modal) {
+		toggleModal.modal = document.getElementById('modal');
+		toggleModal.backdrop = document.getElementById('backdrop');
+	}
+	
+	if(toggleModal.visible) {
+		toggleModal.modal.style.pointerEvents = 'auto';
+		toggleModal.modal.style.opacity = '1';
+		toggleModal.backdrop.style.pointerEvents = 'auto';
+		toggleModal.backdrop.style.opacity = '0.2';
+	}
+	
+	else {
+		toggleModal.modal.style.pointerEvents = 'none';
+		toggleModal.modal.style.opacity = '0';
+		toggleModal.backdrop.style.pointerEvents = 'none';
+		toggleModal.backdrop.style.opacity = '0';
+	}
+}
+
 function sleep(ms) {
   return new Promise((resolve, reject) => setTimeout(resolve, ms));
 }

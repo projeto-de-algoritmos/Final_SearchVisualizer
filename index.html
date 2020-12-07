@@ -25,5 +25,23 @@
 		<script type="text/javascript" src="src/node.js"></script>
 		<script type="text/javascript" src="src/utils.js"></script>
 		<script type="text/javascript" src="src/game.js"></script>
+
+		<div class="backdrop" id="backdrop" onclick="toggleModal()"></div>
+		<div class="modal" id="modal">
+			<div class="modal-title">
+				<h1>Choose a shortest path algorithm</h1>
+				<div class="line"></div>
+			</div>
+			<div class="modal-body">
+				<button>Breadth First Search</button>
+				<button>Depth First Search</button>
+				<button>Dijkstra</button>
+				<button>Bellman-Ford</button>
+			</div>
+			<div class="modal-footer">
+				<div class="line"></div>
+				<button onclick="toggleModal()">CANCEL</button>
+			</div>
+		</div>
     </body>
 </html>

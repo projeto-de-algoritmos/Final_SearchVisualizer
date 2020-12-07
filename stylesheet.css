@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
 * {
 	margin: 0;
 	padding: 0;
+}
+
+body {
+	width: 100%;
+	height: 100%;
 }
 
 body {
@@ -9,7 +16,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 100%;
+	height: 100%;	
 }
 
 .toolbar {
@@ -46,7 +53,6 @@ body {
 	transform: none !important;
 	color: #8d6262 !important;
 }
-
 
 .container {
 	display: block;
@@ -111,4 +117,121 @@ body {
 	-webkit-transform: rotate(45deg);
 	-ms-transform: rotate(45deg);
 	transform: rotate(45deg);
+}
+
+.backdrop {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	left: 0;
+	top: 0;
+	background-color: black;
+	opacity: 20%;
+	transition: 0.5s;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.modal {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: white;
+	width: 33vw;
+	height: 80vh;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	border: none;
+	border-radius: 0.25vw;
+	opacity: 0;
+	pointer-events: none;
+	transition: 0.5s;
+}
+
+.modal-title {
+	max-height: 20%;
+	overflow: hidden;
+	font-family: 'Raleway';
+	text-align: center;
+}
+
+.modal-footer {
+	min-height: 8%;
+	max-height: 8%;
+	text-align: right;
+}
+
+.modal-title h1 {
+	font-size: 2vw;
+	padding: 0;
+	margin: 0;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	text-height: 2vw;
+}
+
+.modal-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	max-height: 72%;
+	min-height: 72%;
+}
+
+.modal-footer button {
+	background-color: black;
+	border: none;
+	color: white;
+	font-size: 1vw;
+	font-family: 'Raleway';
+	height: 80%;
+	cursor: pointer;
+	border-radius: 5px;
+	text-align: center;
+	transition: 0.25s;
+	margin-right: 0.5vw;
+	margin-top: 0.5vh;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+.modal-footer button:hover {
+	transform: scale(1.05);
+}
+
+.modal-body button {
+	background-color: black;
+	border: none;
+	color: white;
+	font-size: 1vw;
+	font-family: 'Raleway';
+	height: 10vh;
+	cursor: pointer;
+	border-radius: 5px;
+	text-align: center;
+	transition: 0.25s;
+	margin-right: 0.5vw;
+	margin-top: 0.5vh;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+.modal-body button:hover {
+	transform: scale(1.05);
+}
+
+.modal-footer .line {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.line {
+	width: 100%;
+	height: 0;
+	border: none;
+	border-bottom: 1px black solid;
+	margin-bottom: 1em;
 }
