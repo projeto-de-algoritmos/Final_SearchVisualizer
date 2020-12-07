@@ -47,3 +47,7 @@ ou use qualquer servidor http de sua preferência.
 - Após a escolha do nó inical, escolha o nó final cliacando no ícone logo a direta do icone de escolher o nó inicial, e clique no nó que deseja que seja o final;
 - Em seguida, um pop up irá aparecer em tela para que seja escolhido o algoritmo para ser executado, escolha o algoritmo de sua preferência;
 - O código irá executar e todo o algoritmo irá ser representado de forma visual;
+
+## Video
+
+O Video para o projeto pode ser encontrado [aqui](tutorial.mp4)
